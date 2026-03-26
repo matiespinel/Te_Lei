@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+  .contenedor {
+    display: flex;
+    justify-content: space-between; /* Espacio entre elementos */
+    background-color: lightgray;
+  }
+  .item {
+    background-color: rgb(58, 58, 146);
+    color: white;
+    padding: 20px;
+    margin: 20px;
+    width: auto;
+  }
+  .display {
+    background-color: rgb(101, 60, 27);
+    color: rgb(255, 255, 255);
+    padding: 50px;
+    margin: 20px;
+    width: 2000px;
+  }
+</style>
+<body>
+
+    <h2>Ingrese categoria de accion</h2>
+    
+    <div class="contenedor">
+    <div class="item"><form action="/accion" method="post">
+        <select name="accion" id="accion">
+            <option value="consultar">Consultar</option>
+            <option value="modificar">Modificar</option>
+            <option value="agregar">Agregar</option>
+        </select>
+        <br>
+        <label for="titulo">Título:</label>
+        <input type="text" name="titulo" id="titulo">
+        <br>
+        <label for="autor o fuente">Autor:</label>
+        <input type="text" name="autor" id="autor">
+        <br>
+        <label for="leido">Leído:</label>
+        <select name="leido" id="leido">
+            <option value="leido">Leído</option>
+            <option value="no_leido">No leído</option>
+            <option value="a_medias">A medias</option>
+        </select>
+        <br>
+        <label for="pagina">Página/Capítulo:</label>
+        <input type="number" name="pagina" id="pagina">
+        <br>
+        <input type="submit" value="Enviar">
+
+    </form></div>
+    <div class="display"> display de libros</div>
+</div>
+</body>
+</html>
