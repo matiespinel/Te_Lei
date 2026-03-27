@@ -1,76 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gestor de Libros - TeLei</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<style>
-  .contenedor {
-    display: flex;
-    justify-content: space-between; /* Espacio entre elementos */
-    background-color: lightgray;
-  }
-  .item {
-    background-color: rgb(58, 58, 146);
-    color: white;
-    padding: 20px;
-    margin: 20px;
-    width: auto;
-  }
-  .display {
-    background-color: rgb(101, 60, 27);
-    color: rgb(255, 255, 255);
-    padding: 50px;
-    margin: 20px;
-    width: 2000px;
-  }
-</style>
 <body>
+    <div class="main-container">
+        <header>
+            <h1>TeLei - Tu Biblioteca Personal</h1>
+            <p>Gestioná tu colección de libros de forma simple</p>
+        </header>
 
-    <h2>Ingrese categoria de accion</h2>
-    
-    <div class="contenedor">
-    <div class="item"><form action="/accion" method="post">
-        <select name="accion" id="accion">
-            <option value="consultar">Consultar</option>
-            <option value="modificar">Modificar</option>
-            <option value="agregar">Agregar</option>
-        </select>
-        <br>
-        <label for="titulo">Título:</label>
-        <input type="text" name="titulo" id="titulo">
-        <br>
-        <label for="autor o fuente">Autor:</label>
-        <input type="text" name="autor" id="autor">
-        <br>
-        <label for="leido">Leído:</label>
-        <select name="leido" id="leido">
-            <option value="leido">Leído</option>
-            <option value="no_leido">No leído</option>
-            <option value="a_medias">A medias</option>
-        </select>
-        <br>
-        <label for="pagina">Página/Capítulo:</label>
-        <input type="number" name="pagina" id="pagina">
-        <br>
-        <input type="submit" value="Enviar">
+        <!-- Mensajes Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    </form></div>
-    <div class="display"> display de libros
+        <div class="content-wrapper">
+            <!-- Panel de Formulario -->
+            <div class="form-panel">
+                <h2>Gestión de Libros</h2>
 
-      {% for libro in libros %}
-        <p>{{ libro.titulo }}</p>
-        <br>
-        <p>Autor: {{ libro.autor_fuente }}</p>
-        <br>
-        <p>Leído: {{ libro.leido }}</p>
-        <br>
-        <p>Página/Capítulo: {{ libro.pagina_capitulo }}</p>
-          <hr>
-      {% endfor %}
+                <form action="/accion" method="post">
+                    <div class="form-group">
+                        <label for="accion">Acción:</label>
+                        <select name="accion" id="accion" required>
+                            <option value="consultar">Consultar</option>
+                            <option value="modificar">Modificar</option>
+                            <option value="agregar">Agregar</option>
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="titulo">Título:</label>
+                        <input type="text" name="titulo" id="titulo" placeholder="Ej: Cien años de soledad">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="autor">Autor:</label>
+                        <input type="text" name="autor" id="autor" placeholder="Ej: Gabriel García Márquez">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leido">Estado:</label>
+                        <select name="leido" id="leido">
+                            <option value="leido">Leído</option>
+                            <option value="no_leido">No leído</option>
+                            <option value="a_medias">A medias</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pagina">Página/Capítulo actual:</label>
+                        <input type="number" name="pagina" id="pagina" placeholder="Ej: 42" min="0">
+                    </div>
+
+                    <button type="submit" class="btn-submit">Enviar</button>
+                </form>
+            </div>
+
+            <!-- Panel de Libros -->
+            <div class="books-panel">
+                <h2>Mis Libros</h2>
+
+                {% if libros %}
+                    {% for libro in libros %}
+                        <div class="book-card">
+                            <h3 class="book-title">{{ libro.titulo }}</h3>
+                            <div class="book-info">
+                                <span><strong>Autor:</strong> {{ libro.autor_fuente }}</span>
+                                <span><strong>Estado:</strong>
+                                    {% if libro.leido == 'leido' %}
+                                        <span class="status-badge status-leido">Leído</span>
+                                    {% elif libro.leido == 'no_leido' %}
+                                        <span class="status-badge status-no-leido">No leído</span>
+                                    {% else %}
+                                        <span class="status-badge status-a-medias">A medias</span>
+                                    {% endif %}
+                                </span>
+                                <span><strong>Página:</strong> {{ libro.pagina_capitulo }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <span>📚</span>
+                        <p>No hay libros registrados</p>
+                        <p>¡Agregá tu primer libro usando el formulario!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</div>
 </body>
 </html>

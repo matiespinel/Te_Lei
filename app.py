@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, redirect, url_for, flash
 from base import libro, libors
 from flask import render_template
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
+app.secret_key = 'clave-secreta-para-flash-messages'
+
 @app.route("/")
 def index():
     libros_lista = []
@@ -10,52 +12,66 @@ def index():
         x.pop("_id")
         libros_lista.append(x)
     return render_template("index.html", libros=libros_lista)
+
 def agregar(titulo, autor, leido, pagina):
     nuevo_libro = libro(titulo, autor, leido, pagina)
-    if (nuevo_libro.save()): 
-        return jsonify({"message": "Libro agregado exitosamente."}), 201
+    if (nuevo_libro.save()):
+        return True, "Libro agregado exitosamente."
     else:
-        return jsonify({"message": "Error al agregar el libro."}), 400
-
+        return False, "El libro ya existe."
 
 def buscar_y_actualizar(titulo, leido, pagina):
     libro_encontrado = libro.find_by_title(titulo)
-    #check casos borde
     if (pagina is None) and leido == "a medias":
-        return jsonify({"message": "Error: La página o capítulo no puede ser nulo para un libro en estado 'a medias'."}), 400
+        return False, "La página no puede ser nula para un libro 'a medias'."
     else:
-        
         if libro_encontrado:
             libors.update_one({'titulo': titulo}, {'$set': {'pagina_capitulo': pagina, 'leido': leido}})
-            return jsonify({"message": "Libro actualizado exitosamente."}), 200
+            return True, "Libro actualizado exitosamente."
         else:
-            return jsonify({"message": "Libro no encontrado."}), 404
-
+            return False, "Libro no encontrado."
 
 @app.route("/accion", methods=["POST"])
-def accion(): #en base a lo que llegue del html, se puede realizar una acción específica con el libro encontrado, como marcarlo como leído, actualizar su estado, etc.
-    #primero me fije que accione me llego del html, y luego realizo la acción correspondiente con el libro encontrado
-    #ya sea  Consultar, Modificar o Agregar
+def accion():
     accion = request.form.get("accion")
     titulo = request.form.get("titulo")
     autor = request.form.get("autor")
     leido = request.form.get("leido")
     pagina = request.form.get("pagina")
-    #verificamos accion:
+
+    mensaje = ""
+    tipo = "success"
+    libro_consultado = None
+
     if accion not in ["consultar", "modificar", "agregar"]:
-        return jsonify({"message": "Acción no válida."}), 400
-    if accion == "agregar":
-        agregar(titulo, autor, leido, pagina)
+        mensaje = "Acción no válida."
+        tipo = "error"
+    elif accion == "agregar":
+        exito, msg = agregar(titulo, autor, leido, pagina)
+        mensaje = msg
+        tipo = "success" if exito else "error"
     elif accion == "consultar":
         libro_encontrado = libro.find_by_title(titulo)
         if libro_encontrado:
             libro_encontrado.pop("_id")
-            return jsonify(libro_encontrado), 200
+            libro_consultado = libro_encontrado
+            mensaje = f"Libro encontrado: {titulo}"
+            tipo = "success"
         else:
-            return jsonify({"message": "Libro no encontrado."}), 404
+            mensaje = "Libro no encontrado."
+            tipo = "error"
     elif accion == "modificar":
-        buscar_y_actualizar(titulo, leido, pagina)
-    return jsonify({"message": f"Acción '{accion}' realizada exitosamente."}), 200
+        exito, msg = buscar_y_actualizar(titulo, leido, pagina)
+        mensaje = msg
+        tipo = "success" if exito else "error"
+
+    flash(mensaje, tipo)
+
+    # Si se consultó un libro y se encontró, lo pasamos como libro destacado
+    if libro_consultado:
+        return render_template("index.html", libros=[libro_consultado], mensaje=mensaje, tipo=tipo)
+
+    return redirect(url_for('index'))
 
 
 

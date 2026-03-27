@@ -1,5 +1,15 @@
 
+# import os
+# from dotenv import load_dotenv
 from pymongo import MongoClient
+
+# load_dotenv()
+
+# MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
+# MongoDB Atlas (comentado - descomentar y configurar .env para usar)
+# MONGO_URI = os.getenv('MONGO_URI', 'mongodb+srv://usuario:password@cluster.mongodb.net/')
+
+# Conexión local
 client = MongoClient('mongodb://localhost:27017/')
 db = client['mydatabase']
 libors = db['libors']
