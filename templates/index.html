@@ -57,7 +57,20 @@
         <input type="submit" value="Enviar">
 
     </form></div>
-    <div class="display"> display de libros</div>
+    <div class="display"> display de libros
+
+      {% for libro in libros %}
+        <p>{{ libro.titulo }}</p>
+        <br>
+        <p>Autor: {{ libro.autor_fuente }}</p>
+        <br>
+        <p>Leído: {{ libro.leido }}</p>
+        <br>
+        <p>Página/Capítulo: {{ libro.pagina_capitulo }}</p>
+          <hr>
+      {% endfor %}
+
+    </div>
 </div>
 </body>
 </html>

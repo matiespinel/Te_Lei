@@ -1,3 +1,4 @@
+
 from pymongo import MongoClient
 client = MongoClient('mongodb://localhost:27017/')
 db = client['mydatabase']
@@ -10,11 +11,11 @@ class estado(Enum):
     NO_LEIDO = "no leido"
     A_MEDIAS = "a medias"
 class libro:
-    def __init__(self, title, author, leido):
+    def __init__(self, title, author, leido, pagina_capitulo):
         self.titulo : str = title
         self.autor_fuente : str = author
         self.leido : bool = leido
-        self.pagina_capitulo : int = 0
+        self.pagina_capitulo : int = pagina_capitulo
 
     def save(self):
         if (libors.find_one({'titulo': self.titulo})):
@@ -23,7 +24,7 @@ class libro:
         libors.insert_one({
             'titulo': self.titulo,
             'autor_fuente': self.autor_fuente,
-            'leido': self.leido,
+            'leido': self.leido,   #enum
             'pagina_capitulo': self.pagina_capitulo
         })
         return True
