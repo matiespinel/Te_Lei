@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for, flash
 from base import libro, libors
 from flask import render_template
 
+
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = 'clave-secreta-para-flash-messages'
 
@@ -13,8 +14,8 @@ def index():
         libros_lista.append(x)
     return render_template("index.html", libros=libros_lista)
 
-def agregar(titulo, autor, leido, pagina):
-    nuevo_libro = libro(titulo, autor, leido, pagina)
+def agregar(titulo, autor, leido, pagina, generos):
+    nuevo_libro = libro(titulo, autor, leido, pagina, generos)
     if (nuevo_libro.save()):
         return True, "Libro agregado exitosamente."
     else:
@@ -38,6 +39,7 @@ def accion():
     autor = request.form.get("autor")
     leido = request.form.get("leido")
     pagina = request.form.get("pagina")
+    generos = request.form.getlist("generos")
 
     mensaje = ""
     tipo = "success"
@@ -47,7 +49,7 @@ def accion():
         mensaje = "Acción no válida."
         tipo = "error"
     elif accion == "agregar":
-        exito, msg = agregar(titulo, autor, leido, pagina)
+        exito, msg = agregar(titulo, autor, leido, pagina, generos)
         mensaje = msg
         tipo = "success" if exito else "error"
     elif accion == "consultar":

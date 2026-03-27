@@ -20,12 +20,23 @@ class estado(Enum):
     LEIDO = "leido"
     NO_LEIDO = "no leido"
     A_MEDIAS = "a medias"
+
+class genero(Enum):
+    FICCION = "ficcion"
+    CIENCIA_FICCION = "ciencia ficcion"
+    FANTASIA = "fantasia"
+    HISTORICO = "historico"
+    AVENTURA = "aventura"
+    ARTES_MARCIALES = "artes marciales"
+    MISTERIO = "misterio"
+    ROMANCE = "romance"
 class libro:
-    def __init__(self, title, author, leido, pagina_capitulo):
+    def __init__(self, title, author, leido, pagina_capitulo, generos):
         self.titulo : str = title
         self.autor_fuente : str = author
         self.leido : bool = leido
         self.pagina_capitulo : int = pagina_capitulo
+        self.generos : list = generos
 
     def save(self):
         if (libors.find_one({'titulo': self.titulo})):
@@ -35,7 +46,8 @@ class libro:
             'titulo': self.titulo,
             'autor_fuente': self.autor_fuente,
             'leido': self.leido,   #enum
-            'pagina_capitulo': self.pagina_capitulo
+            'pagina_capitulo': self.pagina_capitulo,
+            'generos': self.generos
         })
         return True
 

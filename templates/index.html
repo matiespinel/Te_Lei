@@ -63,6 +63,36 @@
                         <input type="number" name="pagina" id="pagina" placeholder="Ej: 42" min="0">
                     </div>
 
+                    <div class="form-group" id="generos-group" style="display: none;">
+                        <label>Géneros:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="ficcion"> Ficción
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="ciencia ficcion"> Ciencia Ficción
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="fantasia"> Fantasía
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="historico"> Histórico
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="aventura"> Aventura
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="artes marciales"> Artes Marciales
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="misterio"> Misterio
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="generos" value="romance"> Romance
+                            </label>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn-submit">Enviar</button>
                 </form>
             </div>
@@ -87,6 +117,12 @@
                                     {% endif %}
                                 </span>
                                 <span><strong>Página:</strong> {{ libro.pagina_capitulo }}</span>
+                                <span><strong>Géneros:</strong>
+                                    {% if libro.generos %}
+                                        {{ libro.generos | join(', ') }}
+                                    {% else %}
+                                        Sin géneros
+                                    {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -100,5 +136,15 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('accion').addEventListener('change', function() {
+            const generosGroup = document.getElementById('generos-group');
+            if (this.value === 'agregar') {
+                generosGroup.style.display = 'block';
+            } else {
+                generosGroup.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
