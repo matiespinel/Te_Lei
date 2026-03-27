@@ -13,7 +13,7 @@ def index():
 @app.route("/agregar", methods=["POST"])
 def agregar():
     data = request.get_json()
-    nuevo_libro = libro(data['titulo'], data['autor_fuente'], data['leido'])
+    nuevo_libro = libro(data['titulo'], data['autor_fuente'], data['leido'], data['pagina_capitulo'])
     if (nuevo_libro.save()): 
         return jsonify({"message": "Libro agregado exitosamente."}), 201
     else:
@@ -33,6 +33,25 @@ def buscar_y_actualizar():
             return jsonify({"message": "Libro actualizado exitosamente."}), 200
         else:
             return jsonify({"message": "Libro no encontrado."}), 404
+
+@app.route("/accion", methods=["POST"])
+def accion(): #en base a lo que llegue del html, se puede realizar una acción específica con el libro encontrado, como marcarlo como leído, actualizar su estado, etc.
+    #primero me fije que accione me llego del html, y luego realizo la acción correspondiente con el libro encontrado
+    #ya sea  Consultar, Modificar o Agregar
+    data = request.get_json()
+    #verificamos accion:
+    accion = data.get("accion")
+    if accion not in ["consultar", "modificar", "agregar"]:
+        return jsonify({"message": "Acción no válida."}), 400
+    if accion == "agregar":
+        agregar()
+    elif accion == "consultar":
+        #buscar_y_actualizar()
+        pass
+    elif accion == "modificar":
+        buscar_y_actualizar()
+    return jsonify({"message": f"Acción '{accion}' realizada exitosamente."}),
+
 @app.route("/")
 def index():
     return render_template("index.html")

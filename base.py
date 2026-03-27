@@ -23,7 +23,8 @@ class libro:
         libors.insert_one({
             'titulo': self.titulo,
             'autor_fuente': self.autor_fuente,
-            'leido': self.leido
+            'leido': self.leido,
+            'pagina_capitulo': self.pagina_capitulo
         })
         return True
 
