@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, url_for, flash
 from base import libro, libors
 from flask import render_template
+from analysis import encoded
 
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -45,7 +46,7 @@ def accion():
     tipo = "success"
     libro_consultado = None
 
-    if accion not in ["consultar", "modificar", "agregar"]:
+    if accion not in ["consultar", "modificar", "agregar", "stats"]:
         mensaje = "Acción no válida."
         tipo = "error"
     elif accion == "agregar":
@@ -66,6 +67,9 @@ def accion():
         exito, msg = buscar_y_actualizar(titulo, leido, pagina)
         mensaje = msg
         tipo = "success" if exito else "error"
+    elif accion == "stats":
+        # Lógica para mostrar estadísticas
+        pass
 
     flash(mensaje, tipo)
 
